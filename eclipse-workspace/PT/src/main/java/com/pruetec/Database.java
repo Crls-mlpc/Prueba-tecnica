@@ -12,9 +12,9 @@ public class Database {
 		try (Connection conn = DriverManager.getConnection(URL)){
 			try (Statement stmt = conn.createStatement()){
 				stmt.execute("""
-						CREATE TABLE IF NOT EXIST users (
+						CREATE TABLE IF NOT EXISTS users (
 						
-						id TEXT PRIMERY KEY,
+						id TEXT PRIMARY KEY,
 						email TEXT,
 						name TEXT,
 						phone TEXT,
@@ -74,11 +74,37 @@ public class Database {
 		}
 	}
 	
+	 public static void insertUser(User u) {
+	        try (Connection conn = DriverManager.getConnection(URL)) {
+	            try (PreparedStatement ps = conn.prepareStatement("""
+	                INSERT INTO users (id, email, name, phone, password, tax_id, created_at)
+	                VALUES (?, ?, ?, ?, ?, ?, ?)
+	            """)) {
+	                ps.setString(1, u.id.toString());
+	                ps.setString(2, u.email);
+	                ps.setString(3, u.name);
+	                ps.setString(4, u.phone);
+	                ps.setString(5, u.password);     // ya debe venir cifrada con CryptoUtil.encrypt(...)
+	                ps.setString(6, u.taxId);
+	                ps.setString(7, u.createdAt);
+	                ps.executeUpdate();
+	            }
+
+	            if (u.addresses != null) {
+	                for (Address a : u.addresses) {
+	                    insertAddress(conn, u.id.toString(), a.name, a.street, a.countryCode);
+	                }
+	            }
+	        } catch (SQLException e) {
+	            throw new RuntimeException(e);
+	        }
+	    }
+	
 	private static void insertAddress(Connection conn, String userId, String name, String street, String country) throws SQLException{
 		PreparedStatement ps = conn.prepareStatement("""
 				
 				INSERT INTO addresses (user_id, name, street, country_code)
-				VALUES (?, ?, ?, ?,)
+				VALUES (?, ?, ?, ?)
 				""");
 		
 		ps.setString(1, userId);
