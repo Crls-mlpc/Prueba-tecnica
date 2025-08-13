@@ -21,7 +21,7 @@ public class DataResponse {
     	r.email = u.email;
     	r.name = u.name;
     	r.phone = u.phone;
-    	r.taxId = u.taxID;
+    	r.taxId = u.taxId;
     	r.createdAt = u.createdAt;
     	r.addresses = u.addresses;
     	

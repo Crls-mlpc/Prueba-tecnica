@@ -9,7 +9,7 @@ public class User {
 	public String name;
 	public String phone;
 	public String password;
-	public String taxID;
+	public String taxId;
 	public String createdAt;
 	public List <Address> addresses;
 
